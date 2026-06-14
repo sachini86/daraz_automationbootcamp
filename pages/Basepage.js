@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import {expect } from '@playwright/test';
 
 class BasePage {
   constructor(page) {
@@ -8,7 +8,6 @@ class BasePage {
 // navigation path
 async goto(path = '/') {
     await this.page.goto(path);
-    await this.closePopup();
   }
 
   async waitForPageReady() {
@@ -21,21 +20,21 @@ async goto(path = '/') {
       
       if (await closeBtn.isVisible({ timeout: 5000 })) {
         await closeBtn.click();
-        logInfo('Popup dismissed');
+        
       } else {
-        logInfo('No popup to dismiss');
+        console.log('No popup to dismiss');
       }
     } catch (error) {
-      logInfo(`No popup to dismiss (${error.message})`);
+      console.log('No popup to dismiss');
     }
   }
 
-  async expectVisible(locator, options = {}) {
-    await expect(locator).toBeVisible({ timeout: TIMEOUTS.default, ...options });
-  }
+ // async expectVisible(locator, options = {}) {
+ //   await expect(locator).toBeVisible({ timeout: TIMEOUTS.default, ...options });
+ // }
 }
 
-module.exports = { BasePage, SELECTORS, TIMEOUTS };
+module.exports = { BasePage };
 
 
 

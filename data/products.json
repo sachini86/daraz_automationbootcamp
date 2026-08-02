@@ -1,0 +1,11 @@
+{
+  "validSearchTerm": "wireless earbuds",
+  "invalidSearchTerm": "zzzzznonexistentproductzzzzz",
+  "secondSearchTerm": "mobile phone case",
+  "priceFilter": {
+    "min": "1000",
+    "max": "10000"
+  },
+  "brandFilter": "Samsung",
+  "freeShippingKeyword": "Free Shipping"
+}

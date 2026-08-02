@@ -1,6 +1,11 @@
+// utils/helpers.js
 const fs = require('fs');
 const path = require('path');
 
+/**
+ * Loads a .env-style file into process.env
+ * @param {string} envName - 'qa' or 'stag'
+ */
 function loadEnvFile(envName = 'qa') {
   const envPath = path.resolve(__dirname, `../env/${envName}.env`);
   if (!fs.existsSync(envPath)) return;
@@ -14,8 +19,13 @@ function loadEnvFile(envName = 'qa') {
   }
 }
 
+/**
+ * Calculates the expected cart badge count after an add/remove action.
+ * @param {number|string} beforeCount
+ * @param {number} delta - +1 for add, -1 for remove
+ */
 function getCartBadgeExpectedCount(beforeCount, delta) {
-  const next = Number(beforeCount) + delta;
+  const next = Number(beforeCount || 0) + delta;
   return next > 0 ? next.toString() : '';
 }
 

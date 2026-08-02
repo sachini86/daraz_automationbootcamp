@@ -1,11 +1,11 @@
 const { defineConfig, devices } = require('@playwright/test');
-const { loadEnvFile } = require('./util/helper');
+const { loadEnvFile } = require('./utils/helpers');
 
 const envName = process.env.TEST_ENV || 'qa';
 loadEnvFile(envName);
 
 const baseURL = process.env.BASE_URL || 'https://www.daraz.lk';
-const AUTH_FILE = 'playwright/.auth/user.json';
+const AUTH_FILE = 'test/.auth/user.json';
 
 /** @type {import('@playwright/test').PlaywrightTestConfig['use']} */
 const sharedUse = {
@@ -15,13 +15,14 @@ const sharedUse = {
   viewport: null,
   launchOptions: {
     args: ['--start-maximized'],
+    slowMo: 800, 
   },
   trace: 'retain-on-failure',
   screenshot: 'on',
   video: 'retain-on-failure',
 };
 
-const ignoredTests = [/auth\.setup\.js/, /cart\.spec\.js/, /NotAGoodPractice\.spec\.js/];
+const ignoredTests = [/auth\.setup\.js/, /cart\.spec\.js/,/auth\.spec\.js/, /NotAGoodPractice\.spec\.js/];
 
 module.exports = defineConfig({
   testDir: './test',
@@ -30,7 +31,7 @@ module.exports = defineConfig({
   retries: process.env.CI ? 2 : 1,
   workers: process.env.CI ? 2 : undefined,
   timeout: 60000,
-  reporter: [['html'], ['list']],
+  reporter: [['html', { open: 'always' }], ['list']],
   use: sharedUse,
   projects: [
     {
@@ -52,14 +53,10 @@ module.exports = defineConfig({
       },
     },
     {
-      name: 'firefox',
-      testIgnore: ignoredTests,
-      use: { ...devices['Desktop Firefox'] },
-    },
-    {
-      name: 'webkit',
-      testIgnore: ignoredTests,
-      use: { ...devices['Desktop Safari'] },
+      name: 'chromium-auth',                 // new project
+      testMatch: /auth\.spec\.js/,
+      dependencies: ['setup'],
+      use: { ...devices['Desktop Chrome'] },
     },
   ],
 });

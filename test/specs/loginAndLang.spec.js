@@ -1,19 +1,45 @@
-import { test, expect } from '@playwright/test';
+const { test, expect } = require('@playwright/test');
+const { HomePage } = require('../../pages/home/HomePage');
+const { LoginPage } = require('../../pages/user/LoginPage');
+const { SettingsPage } = require('../../pages/user/SettingsPage');
+const users = require('../../data/user.json');
 
-const {HomePage} = require('../../pages/home/HomePage');
-const {LoginPage} = require('../../pages/user/LoginPage');
-const user = require('../../data/user.json');
+test.describe('Login Module @smoke @regression', () => {
+  test.beforeEach(async ({ context }) => {
+    await context.clearCookies();
+  });
 
-test("TC-01  -  Successful login with valid credentials", async ({ page }) => {
-    let homePage = new HomePage(page);
-    let loginPage = new LoginPage(page);
+  test('TC-01 Successful login with valid credentials', async ({ page }) => {
+    const home = new HomePage(page);
+    const login = new LoginPage(page);
 
-     const validUserData = user.valid;
+    await home.open();
+    await home.header.openLogin();
+    await login.expectFieldsVisible();
+    await login.login(users.valid.email, users.valid.password);
 
-    await homePage.open();
-    await loginPage.login(validUserData.email, validUserData.password);
-    await expect(loginPage.logginTrigger).toContainText(validUserData.displayName);
+    await expect(home.header.loginLink).toBeHidden({ timeout: 10000 });
+  });
 
-   
+  test('TC-02 Multi-language UI (English/Sinhala)', async ({ page }) => {
+    const home = new HomePage(page);
+    const settings = new SettingsPage(page);
 
+    await home.open();
+    await home.expectVisible(home.header.searchInput);
+    await settings.switchToSinhala();
+    await settings.expectLanguageIs('si');
+  });
+
+  test('TC-17 Switch language to Sinhala and back to English', async ({ page }) => {
+    const home = new HomePage(page);
+    const settings = new SettingsPage(page);
+
+    await home.open();
+    await settings.switchToSinhala();
+    await settings.expectLanguageIs('si');
+
+    await settings.switchToEnglish();
+    await settings.expectLanguageIs('en');
+  });
 });

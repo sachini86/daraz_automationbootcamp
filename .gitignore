@@ -9,4 +9,5 @@ node_modules/
 
 # Credentials
 user.json
-.env
+data/user.json
+test/.auth/user.json
